@@ -1,6 +1,6 @@
 import random
 from typing import List, Tuple
-from src.matrix import MazeMatrix, N, E, S, W, MOVE, OPPOSITE
+from src.matrix import MazeMatrix, MOVE, OPPOSITE  # , N, E, S, W
 
 
 class MazeGenerator:

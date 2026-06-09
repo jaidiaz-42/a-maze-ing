@@ -1,5 +1,5 @@
 from collections import deque
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple  # , Dict, Optional
 from src.matrix import MazeMatrix, N, E, S, W, MOVE
 
 
