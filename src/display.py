@@ -84,7 +84,7 @@ class MazeDisplay:
                 elif self.show_path and (x, y) in path_set:
                     mid_line += c["path"] + " • "
                 elif (x, y) in self.matrix.cells_42:
-                    mid_line += c["42"] + " 42"
+                    mid_line += c["42"] + "███"
                 else:
                     mid_line += "   "
 

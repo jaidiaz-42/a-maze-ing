@@ -18,10 +18,12 @@ install:
 	@echo "Entorno listo y empaquetado completado."
 
 run:
+	@echo -e "\e]11;#000000\a"  # background black
 	@if [ ! -f $(CONFIG) ]; then \
 		echo " Error: No se encuentra el archivo $(CONFIG)."; \
 		exit 1; \
 	fi
+	clear
 	$(POETRY) run python3 a_maze_ing.py $(CONFIG)
 
 debug:
@@ -29,8 +31,8 @@ debug:
 
 clean:
 	@echo " Limpiando residuos de compilación..."
-	rm -rf dist build *.egg-info .mypy_cache
-	rm -f *.whl
+	rm -rf dist build *.egg-info .mypy_cache __pycache__ src/__pycache__
+	rm -f *.whl maze.txt
 	@echo " Directorio limpio."
 
 lint:

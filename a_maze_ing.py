@@ -11,25 +11,28 @@ from src.display import MazeDisplay
 
 
 def get_key() -> str:
+    # added type ignores to work with windows and check lints
     if os.name == 'nt':
-        import msvcrt
+        import msvcrt  # type: ignore
         try:
-            ch = msvcrt.getch().decode('utf-8').lower()
+            ch = msvcrt.getch().decode('utf-8').lower()  # type: ignore
             return ch
         except Exception:
             return ""
-
-    # linux / macOS
-    import tty
-    import termios
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch.lower()
+    else:
+        # linux / macOS
+        import tty
+        import termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)  # type: ignore[attr-defined]
+        try:
+            tty.setraw(sys.stdin.fileno())  # type: ignore[attr-defined]
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd,  # type: ignore[attr-defined]
+                              termios.TCSADRAIN,  # type: ignore[attr-defined]
+                              old_settings)
+        return ch.lower()
 
 
 def run_maze_pipeline(config: Dict[str, Any]) -> Tuple[
