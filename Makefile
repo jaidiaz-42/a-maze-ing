@@ -1,43 +1,38 @@
-VENV = venv
-PYTHON = $(VENV)/bin/python
-PIP = $(VENV)/bin/pip
+# Variables
+POETRY = poetry
+CONFIG = config.txt
 
-.PHONY: help install run debug clean lint lint-strict build
+.PHONY: all install run debug clean lint
 
-help:
-	@echo "Comandos disponibles:"
-	@echo "  make help        - Muestra este mensaje de ayuda"
-	@echo "  make install     - Crea el entorno virtual e instala dependencias"
-	@echo "  make run         - Ejecuta el generador de laberintos con config.txt"
-	@echo "  make debug       - Ejecuta el script en modo depuración (pdb)"
-	@echo "  make clean       - Elimina archivos temporales y cachés"
-	@echo "  make lint        - Ejecuta flake8 y mypy con configuración estándar"
-	@echo "  make lint-strict - Ejecuta flake8 y mypy en modo estricto"
-	@echo "  make build       - Construye el paquete distribuible (whl/tar.gz)"
+all: install lint
 
 install:
-	python3 -m venv $(VENV)
-	$(PIP) install --upgrade pip
-	$(PIP) install flake8 mypy build
-	$(PIP) install mlx-2.2-py3-none-any.whl
+	@echo "Instalando entorno y dependencias con Poetry..."
+	$(POETRY) install
+	@echo "Compilando el proyecto..."
+	$(POETRY) build
+	@echo "Colocando el archivo .whl en la raíz del repositorio..."
+	@cp dist/*.whl .
+	@echo "Entorno listo y empaquetado completado."
 
 run:
-	$(PYTHON) a_maze_ing.py config.txt
+	@if [ ! -f $(CONFIG) ]; then \
+		echo " Error: No se encuentra el archivo $(CONFIG)."; \
+		exit 1; \
+	fi
+	$(POETRY) run python3 a_maze_ing.py $(CONFIG)
 
 debug:
-	$(PYTHON) -m pdb a_maze_ing.py config.txt
+	$(POETRY) run python3 -m pdb a_maze_ing.py $(CONFIG)
 
 clean:
-	rm -rf __pycache__ .mypy_cache */__pycache__
-	rm -rf build/ dist/ *.egg-info/
+	@echo " Limpiando residuos de compilación..."
+	rm -rf dist build *.egg-info .mypy_cache
+	rm -f *.whl
+	@echo " Directorio limpio."
 
 lint:
-	$(VENV)/bin/flake8 .
-	$(VENV)/bin/mypy --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs .
-
-lint-strict:
-	$(VENV)/bin/flake8 .
-	$(VENV)/bin/mypy --strict .
-
-build:
-	$(PYTHON) -m build
+	@echo " Pasando Flake8 (Estilo)..."
+	$(POETRY) run flake8 a_maze_ing.py src/
+	@echo " Pasando Mypy (Tipado)..."
+	$(POETRY) run mypy --disallow-untyped-defs --check-untyped-defs a_maze_ing.py src/
