@@ -11,8 +11,6 @@ from src.display import MazeDisplay
 
 
 def get_key() -> str:
-    """Captura una sola pulsación de tecla en la terminal sin esperar al Intro (Unix/macOS)."""
-    # Si estamos en Windows, usamos msvcrt
     if os.name == 'nt':
         import msvcrt
         try:
@@ -21,7 +19,7 @@ def get_key() -> str:
         except Exception:
             return ""
 
-    # En el entorno 42 (Linux/macOS), usamos termios para el control de bajo nivel del teclado
+    # linux / macOS
     import tty
     import termios
     fd = sys.stdin.fileno()
