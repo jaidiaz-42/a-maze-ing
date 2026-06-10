@@ -9,6 +9,8 @@ all: install lint
 install:
 	@echo "Instalando entorno y dependencias con Poetry..."
 	$(POETRY) install
+	@echo "Instalando herramientas de desarrollo (flake8 y mypy)..."
+	$(POETRY) add --dev flake8 mypy
 	@echo "Compilando el proyecto..."
 	$(POETRY) build
 	@echo "Colocando el archivo .whl en la raíz del repositorio..."
