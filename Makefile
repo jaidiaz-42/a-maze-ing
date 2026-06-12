@@ -1,4 +1,3 @@
-# Variables
 POETRY = poetry
 CONFIG = config.txt
 

@@ -2,7 +2,6 @@ import sys
 import os
 from typing import Dict, Any, Tuple, List
 
-# Importamos nuestros módulos internos desde el paquete src
 from src.config import ConfigParser
 from src.matrix import MazeMatrix
 from src.generator import MazeGenerator
@@ -58,7 +57,7 @@ def run_maze_pipeline(config: Dict[str, Any]) -> Tuple[
 
 
 def main() -> None:
-    # Validación estricta de argumentos (Capítulo IV.2: Usage)
+    # Argv validations
     if len(sys.argv) != 2:
         print("Uso: python3 a_maze_ing.py <archivo_de_configuracion>")
         sys.exit(1)
@@ -66,43 +65,40 @@ def main() -> None:
     config_file = sys.argv[1]
 
     try:
-        # Parsear y validar el archivo de configuración
+        # Parsing and validation config.txt
         parser = ConfigParser(config_file)
         config = parser.parse()
     except Exception as e:
         print(f"Error al cargar la configuración: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Generación inicial del laberinto
+    # Generate maze and solve it to get the path
     matrix, path = run_maze_pipeline(config)
 
-    # Inicializar el visualizador interactivo
+    # Initialize the display with the generated maze and solution path
     display = MazeDisplay(matrix, config["ENTRY"], config["EXIT"], path)
 
-    # Bucle de interacción principal (Capítulo V del Subject)
     while True:
         display.render()
 
-        # Quedarse escuchando la siguiente tecla del usuario
+        # Get user input for interactive controls
         key = get_key()
 
         if key == 'q':
-            # Salir limpiamente del programa
             print("\n¡Gracias por usar 42 A-Maze-ing! Saliendo...\n")
             break
 
         elif key == 'h':
-            # Mostrar / Ocultar la solución (Toggle)
             display.toggle_path()
 
         elif key == 'c':
-            # Cambiar paleta de colores de las paredes dinámicamente
             display.change_color()
 
         elif key == 'r':
+            os.system("clear")
             # Generate ramdon maze
             matrix, path = run_maze_pipeline(config)
-            # Actualizamos las referencias internas del visualizador
+            # Update display with new maze and path
             display.matrix = matrix
             display.path = path
 

@@ -54,12 +54,21 @@ class ConfigParser:
                 raise ValueError(
                     "WIDTH y HEIGHT deben ser enteros mayores que cero.")
 
-            validated["ENTRY"] = self._parse_coordinates(self.data["ENTRY"],
-                                                         validated["WIDTH"],
-                                                         validated["HEIGHT"])
-            validated["EXIT"] = self._parse_coordinates(self.data["EXIT"],
-                                                        validated["WIDTH"],
-                                                        validated["HEIGHT"])
+            validated["ENTRY"] = self._parse_coordinates(
+                self.data["ENTRY"],
+                validated["WIDTH"],
+                validated["HEIGHT"],
+                default_coord=(0, 0),
+                coord_type="ENTRY"
+            )
+            validated["EXIT"] = self._parse_coordinates(
+                self.data["EXIT"],
+                validated["WIDTH"],
+                validated["HEIGHT"],
+                default_coord=(validated["WIDTH"] - 1,
+                               validated["HEIGHT"] - 1),
+                coord_type="EXIT"
+            )
 
             if validated["ENTRY"] == validated["EXIT"]:
                 raise ValueError("Las coordenadas de ENTRY y EXIT"
@@ -78,19 +87,23 @@ class ConfigParser:
     def _parse_coordinates(self,
                            coord_str: str,
                            width: int,
-                           height: int) -> Tuple[int, int]:
+                           height: int,
+                           default_coord: Tuple[int, int],
+                           coord_type: str) -> Tuple[int, int]:
         try:
             parts = coord_str.split(',')
             if len(parts) != 2:
                 raise ValueError()
             x, y = int(parts[0]), int(parts[1])
         except ValueError:
-            raise ValueError(f"El formato de coordenadas '{coord_str}'"
-                             " no es válido. Debe ser 'X,Y'.")
+            print(f"[WARN] Formato inválido para {coord_type} '{coord_str}'"
+                  f". Se usará la configuración estándar: {default_coord}")
+            return default_coord
 
         if not (0 <= x < width) or not (0 <= y < height):
-            raise IndexError(f"Las coordenadas ({x},{y}) "
-                             "están fuera de los límites del laberinto"
-                             f" ({width}x{height}).")
+            print(f"[WARN] Coordenadas de {coord_type} ({x},{y})"
+                  f"fuera de los límites ({width}x{height}). "
+                  f"Aplicando configuración estándar: {default_coord}")
+            return default_coord
 
         return (x, y)

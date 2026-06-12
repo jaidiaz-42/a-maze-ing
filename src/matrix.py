@@ -52,7 +52,7 @@ class MazeMatrix:
         start_x = (self.width - mask_w) // 2
         start_y = (self.height - mask_h) // 2
 
-        # Registrar e incrustar las celdas en el laberinto
+        # apply the mask to the maze grid
         for y in range(mask_h):
             for x in range(mask_w):
                 if mask_42[y][x] == 1:
